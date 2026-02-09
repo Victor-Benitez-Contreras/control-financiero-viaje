@@ -1,0 +1,23 @@
+{
+  "viaje": "Europa 2026",
+  "configuracion": {
+    "moneda": "EUR"
+  },
+  "presupuesto_diario": {
+    "Madrid": {
+      "dia_1": 50.0,
+      "dia_2": 50.0,
+      "dia_3": 65.0
+    },
+    "Paris": {
+      "dia_1": 80.0,
+      "dia_2": 80.0,
+      "dia_3": 80.0,
+      "dia_4": 100.0
+    },
+    "Roma": {
+      "dia_1": 60.0,
+      "dia_2": 60.0
+    }
+  }
+}

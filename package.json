@@ -1,0 +1,15 @@
+{
+    "name": "app-eficiencia-financiera-viaje",
+    "version": "1.0.0",
+    "description": "Bot de WhatsApp para control de eficiencia financiera de viajes",
+    "main": "whatsapp-bot.js",
+    "dependencies": {
+        "whatsapp-web.js": "^1.26.0",
+        "qrcode-terminal": "^0.12.0",
+        "puppeteer": "^22.0.0"
+    },
+    "scripts": {
+        "start": "node whatsapp-bot.js",
+        "test": "node --test index.test.js"
+    }
+}
