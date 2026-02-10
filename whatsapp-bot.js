@@ -22,24 +22,54 @@ client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
 });
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log('--- EL BOT DE FINANZAS ESTÁ LISTO Y CONECTADO ---');
+
+    // Prueba automática de envío al grupo al iniciar
+    const chats = await client.getChats();
+    const target = chats.find(c => c.name.toLowerCase().trim() === GROUP_NAME.toLowerCase().trim());
+
+    if (target) {
+        console.log(`[TEST] Enviando mensaje de saludo a: "${target.name}"`);
+        await client.sendMessage(target.id._serialized, '🤖 Bot de Finanzas activo y listo para el viaje.');
+    } else {
+        console.log(`[ADVERTENCIA] No encontré el grupo "${GROUP_NAME}" en los chats recientes.`);
+    }
+
+    console.log('-------------------------------------------');
 });
 
-client.on('message', async (msg) => {
+client.on('message_create', async (msg) => {
     try {
         const chat = await msg.getChat();
 
-        // Context check: Must be in the specific group
-        if (chat.name === GROUP_NAME) {
-            const response = handleMessage(msg.body, chat.name);
+        // REGLA DE ORO: Log de TODO para ver qué llega
+        console.log(`\n[DEBUG] Registro de mensaje:`);
+        console.log(` - De: "${chat.name}"`);
+        console.log(` - Texto: "${msg.body}"`);
+        console.log(` - ID: ${chat.id._serialized}`);
+
+        const isTargetGroup = chat.name.toLowerCase().trim() === GROUP_NAME.toLowerCase().trim();
+
+        if (isTargetGroup) {
+            console.log('--- ¡COINCIDENCIA DE GRUPO! ---');
+            const response = handleMessage(msg.body, GROUP_NAME);
 
             if (response) {
-                await msg.reply(response);
+                console.log(`[OK] Generando respuesta: ${response}`);
+                await client.sendMessage(chat.id._serialized, response);
+                console.log('[OK] Respuesta enviada con éxito');
+            } else {
+                console.log('[INFO] El mensaje no coincide con los comandos (Gaste/Balance)');
+            }
+        } else {
+            // Comando de prueba global
+            if (msg.body.toLowerCase() === 'ping') {
+                await client.sendMessage(chat.id._serialized, '¡Pong! El bot está vivo pero el filtro de grupo te ignora.');
             }
         }
     } catch (error) {
-        console.error('Error handling message:', error);
+        console.error('[ERROR] Fallo en el procesamiento de mensaje:', error);
     }
 });
 

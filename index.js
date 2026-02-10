@@ -135,7 +135,7 @@ function handleMessage(message, groupName) {
     }
 
     // Command: Gasté [monto] euros en [Ciudad], día [n]
-    const expenseRegex = /Gasté (\d+(?:\.\d+)?) euros en ([\w\s]+), día (\d+)/i;
+    const expenseRegex = /Gast[eé] (\d+(?:\.\d+)?) euros en ([\w\s]+), d[ií]a (\d+)/i;
     const match = cleanMsg.match(expenseRegex);
 
     if (match) {
