@@ -1,23 +1,53 @@
 {
   "viaje": "Europa 2026",
   "configuracion": {
-    "moneda": "EUR"
+    "moneda": "EUR",
+    "presupuesto_random": 120.0
   },
   "presupuesto_diario": {
     "Madrid": {
-      "dia_1": 50.0,
-      "dia_2": 50.0,
-      "dia_3": 65.0
+      "dia_1": 44.0,
+      "dia_2": 87.0,
+      "dia_3": 48.0,
+      "dia_4": 8.0
     },
-    "Paris": {
-      "dia_1": 80.0,
-      "dia_2": 80.0,
-      "dia_3": 80.0,
-      "dia_4": 100.0
+    "Barcelona": {
+      "dia_4": 43.0,
+      "dia_5": 53.0,
+      "dia_6": 29.0
+    },
+    "Praga": {
+      "dia_6": 15.0,
+      "dia_7": 58.0,
+      "dia_8": 58.0,
+      "dia_9": 53.0,
+      "dia_10": 5.7
+    },
+    "Milan": {
+      "dia_10": 25.0,
+      "dia_11": 21.0
+    },
+    "Florencia": {
+      "dia_11": 10.0,
+      "dia_12": 48.0,
+      "dia_13": 73.0,
+      "dia_14": 8.0
     },
     "Roma": {
-      "dia_1": 60.0,
-      "dia_2": 60.0
+      "dia_14": 39.0,
+      "dia_15": 49.0,
+      "dia_16": 89.0,
+      "dia_17": 49.0,
+      "dia_18": 36.5,
+      "dia_19": 10.0
     }
+  },
+  "totales_por_ciudad": {
+    "Madrid": 187.0,
+    "Barcelona": 125.0,
+    "Praga": 189.7,
+    "Milan": 46.0,
+    "Florencia": 139.0,
+    "Roma": 272.5
   }
 }

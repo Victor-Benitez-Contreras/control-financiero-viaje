@@ -4,16 +4,22 @@ const { handleMessage } = require('./index.js');
 
 const GROUP_NAME = 'Finanzas Viaje 2026';
 
-// Check if running in Docker to adjust Puppeteer args
-const isDocker = process.env.DOCKER_ENV === 'true';
-
 const client = new Client({
     authStrategy: new LocalAuth({
         dataPath: './.wwebjs_auth'
     }),
     puppeteer: {
         headless: true,
-        args: isDocker ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] : []
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process', // ¡CRÍTICO para ahorrar RAM!
+            '--disable-gpu'
+        ]
     }
 });
 
@@ -22,54 +28,31 @@ client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
 });
 
-client.on('ready', async () => {
+client.on('ready', () => {
     console.log('--- EL BOT DE FINANZAS ESTÁ LISTO Y CONECTADO ---');
-
-    // Prueba automática de envío al grupo al iniciar
-    const chats = await client.getChats();
-    const target = chats.find(c => c.name.toLowerCase().trim() === GROUP_NAME.toLowerCase().trim());
-
-    if (target) {
-        console.log(`[TEST] Enviando mensaje de saludo a: "${target.name}"`);
-        await client.sendMessage(target.id._serialized, '🤖 Bot de Finanzas activo y listo para el viaje.');
-    } else {
-        console.log(`[ADVERTENCIA] No encontré el grupo "${GROUP_NAME}" en los chats recientes.`);
-    }
-
-    console.log('-------------------------------------------');
 });
 
 client.on('message_create', async (msg) => {
     try {
+        // Ignorar si es una respuesta del propio bot para evitar bucles
+        if (msg.body.includes('🤖 Bot de Finanzas') ||
+            msg.body.includes('has ahorrado') ||
+            msg.body.includes('te quedan')) return;
+
         const chat = await msg.getChat();
-
-        // REGLA DE ORO: Log de TODO para ver qué llega
-        console.log(`\n[DEBUG] Registro de mensaje:`);
-        console.log(` - De: "${chat.name}"`);
-        console.log(` - Texto: "${msg.body}"`);
-        console.log(` - ID: ${chat.id._serialized}`);
-
         const isTargetGroup = chat.name.toLowerCase().trim() === GROUP_NAME.toLowerCase().trim();
 
         if (isTargetGroup) {
-            console.log('--- ¡COINCIDENCIA DE GRUPO! ---');
+            console.log(`[MSG] Recibido en grupo de: ${msg.fromMe ? 'MI' : 'OTRO'}: ${msg.body}`);
             const response = handleMessage(msg.body, GROUP_NAME);
 
             if (response) {
-                console.log(`[OK] Generando respuesta: ${response}`);
+                console.log(`[REP] Respondiendo a ${chat.id._serialized}`);
                 await client.sendMessage(chat.id._serialized, response);
-                console.log('[OK] Respuesta enviada con éxito');
-            } else {
-                console.log('[INFO] El mensaje no coincide con los comandos (Gaste/Balance)');
-            }
-        } else {
-            // Comando de prueba global
-            if (msg.body.toLowerCase() === 'ping') {
-                await client.sendMessage(chat.id._serialized, '¡Pong! El bot está vivo pero el filtro de grupo te ignora.');
             }
         }
     } catch (error) {
-        console.error('[ERROR] Fallo en el procesamiento de mensaje:', error);
+        console.error('[ERR]', error.message);
     }
 });
 

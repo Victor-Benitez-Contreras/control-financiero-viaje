@@ -50,8 +50,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/app
 
 # Instalar dependencias primero para cachear capas
+# Usamos variables de entorno para evitar que puppeteer descargue su chromium (ya lo tenemos por apt)
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
 COPY package*.json ./
-RUN npm install
+
+# npm ci es más estable si existe package-lock.json
+# --no-audit y --no-fund ahorran algo de memoria/red
+RUN npm install --no-audit --no-fund --loglevel info
 
 # Copiar el resto del código
 COPY . .

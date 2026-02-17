@@ -1,8 +1,10 @@
+version: "3.8"
 services:
   whatsapp-finanzas:
     build: .
     container_name: whatsapp_finanzas_bot
     restart: always
+    shm_size: '512mb'
     environment:
       - TZ=Europe/Madrid
       - DOCKER_ENV=true
